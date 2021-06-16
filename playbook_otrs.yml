@@ -1,0 +1,100 @@
+---
+- hosts: all
+  user: vagrant
+  become: true
+  vars_files:
+    - vars.yml
+
+  pre_tasks:
+    - name: Only run "update_cache=yes" if the last one is more than 3600 seconds ago
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+
+###############
+# OTRS SERVER #
+###############
+  tasks:
+    - name: Install needed packages
+      apt:
+        name:
+          - libapache2-mod-perl2 
+          - libdbd-mysql-perl 
+          - libtimedate-perl 
+          - libnet-dns-perl 
+          - libnet-ldap-perl
+          - libio-socket-ssl-perl 
+          - libpdf-api2-perl 
+          - libdbd-mysql-perl 
+          - libsoap-lite-perl 
+          - libtext-csv-xs-perl
+          - libjson-xs-perl 
+          - libapache-dbi-perl 
+          - libxml-libxml-perl 
+          - libxml-libxslt-perl 
+          - libyaml-perl
+          - libarchive-zip-perl 
+          - libcrypt-eksblowfish-perl 
+          - libencode-hanextra-perl 
+          - libmail-imapclient-perl
+          - libtemplate-perl
+          - libmoo-perl
+          - libdatetime-perl
+          - apache2
+
+    - name: Create Directory.
+      ansible.builtin.file:
+        path: /opt/otrs
+        state: directory
+        mode: '0755'
+
+    - name: Download and unpack znuny-latest.
+      ansible.builtin.unarchive:
+        src: https://download.znuny.org/releases/znuny-{{ znuny_version }}.tar.gz
+        dest: /opt/otrs/
+        remote_src: yes
+        creates: /opt/otrs/README.md
+        extra_opts: [--strip-components=1]
+    
+    - name: Create OTRS User.
+      ansible.builtin.user:
+        name: otrs
+        comment: OTRS User
+        home: /opt/otrs
+        group: www-data
+
+    - name: Activate Default Config File.
+      template:
+        src: templates/Config.pm
+        dest: /opt/otrs/Kernel/Config.pm
+        mode: "0644"
+        owner: otrs
+
+    # shell> perl -cw /opt/otrs/bin/cgi-bin/index.pl
+    #/opt/otrs/bin/cgi-bin/index.pl syntax OK
+
+    #shell> perl -cw /opt/otrs/bin/cgi-bin/customer.pl
+    #/opt/otrs/bin/cgi-bin/customer.pl syntax OK
+
+    #shell> perl -cw /opt/otrs/bin/otrs.Console.pl
+    #/opt/otrs/bin/otrs.Console.pl syntax OK
+
+    - name: Link Apache Config
+      ansible.builtin.file:
+        src: /opt/otrs/scripts/apache2-httpd.include.conf
+        dest: /etc/apache2/sites-enabled/zzz_otrs.conf
+        state: link
+
+    - name: Activate Apache Modules.
+      shell: a2enmod perl deflate filter headers
+
+    - name: Restart Apache2
+      service:
+        name: apache2
+        state: restarted
+
+    - name: Fix File Permissions.
+      shell:
+        chdir: /opt/otrs
+        cmd: bin/otrs.SetPermissions.pl

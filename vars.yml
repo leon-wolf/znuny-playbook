@@ -1,0 +1,4 @@
+---
+znuny_version: "6.0.35"
+mysql_root_password: "password"
+db_server: "192.168.50.5"
