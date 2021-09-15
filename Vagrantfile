@@ -6,8 +6,8 @@ Vagrant.configure("2") do |config|
     otrs.vm.box = "avi0xff/debian10-arm64"
     otrs.vm.provider :parallels do |v|
       v.name = "otrs"
-      v.memory = 2048
-      v.cpus = 2
+      v.memory = 4096 
+      v.cpus = 4
     end
     otrs.vm.provision "ansible" do |ansible|
       ansible.playbook = "playbook_otrs.yml"
@@ -19,8 +19,8 @@ Vagrant.configure("2") do |config|
     db.vm.box = "avi0xff/debian10-arm64"
     db.vm.provider :parallels do |v|
       v.name = "db"
-      v.memory = 2048
-      v.cpus = 2
+      v.memory = 4096
+      v.cpus = 4
     end
     db.vm.provision "ansible" do |ansible|
       ansible.playbook = "playbook_db.yml"

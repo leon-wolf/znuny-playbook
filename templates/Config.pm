@@ -30,17 +30,17 @@ sub Load {
     # ---------------------------------------------------- #
 
     # The database host
-    $Self->{DatabaseHost} = '{{ db_server }}';
+    $Self->{DatabaseHost} = '{{ mysql_server }}';
 
     # The database name
     $Self->{Database} = 'otrs';
 
     # The database user
-    $Self->{DatabaseUser} = 'otrs';
+    $Self->{DatabaseUser} = '{{ mysql_user}}';
 
     # The password of database user. You also can use bin/otrs.Console.pl Maint::Database::PasswordCrypt
     # for crypted passwords
-    $Self->{DatabasePw} = '{{ mysql_root_password }}';
+    $Self->{DatabasePw} = '{{ mysql_password }}';
 
     # The database DSN for MySQL ==> more: "perldoc DBD::mysql"
     $Self->{DatabaseDSN} = "DBI:mysql:database=$Self->{Database};host=$Self->{DatabaseHost};";

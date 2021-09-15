@@ -13,8 +13,8 @@
 
   tasks:
     - name: Install MySQL
-      apt: 
-        name: 
+      apt:
+        name:
           - "{{ item }}"
         state: present
       loop:
@@ -22,12 +22,11 @@
         - mariadb-client
         - python-mysqldb
 
-
     - name: Copy .my.cnf file with root password credentials
-      template: 
-        src: templates/.my.cnf 
-        dest: /root/.my.cnf 
-        owner: root 
+      template:
+        src: templates/.my.cnf
+        dest: /root/.my.cnf
+        owner: root
         mode: 0644
 
     - name: Copy MySQL Config
@@ -45,36 +44,35 @@
         mode: 0644
 
     - name: Start the MySQL service
-      service: 
-        name: mysql 
+      service:
+        name: mysql
         state: restarted
 
     - name: Create database user
       community.mysql.mysql_user:
         name: otrs
-        password: "{{ mysql_root_password }}"
-        priv: '*.*:ALL,GRANT'
+        password: "{{ mysql_password }}"
+        priv: "*.*:ALL,GRANT"
         state: present
         host: "{{ item }}"
       loop:
-          - 127.0.0.1
-          - ::1
-          - 192.168.50.4
-          - "%"
-          - localhost
+        - 127.0.0.1
+        - ::1
+        - 192.168.50.4
+        - "%"
+        - localhost
 
     - name: Removes all anonymous user accounts
       community.mysql.mysql_user:
-        name: ''
+        name: ""
         host_all: yes
         state: absent
 
-
     - name: Update mysql root password for all root accounts
-      mysql_user: 
-        name: root 
-        host: "{{ item }}" 
-        password: "{{ mysql_root_password }}"
+      mysql_user:
+        name: root
+        host: "{{ item }}"
+        password: "{{ mysql_password }}"
         state: present
       loop:
         - 127.0.0.1
@@ -87,4 +85,3 @@
       community.mysql.mysql_db:
         name: otrs
         state: present
-
