@@ -20,7 +20,7 @@
       loop:
         - mariadb-server
         - mariadb-client
-        - python-mysqldb
+        - python3-mysqldb
 
     - name: Copy .my.cnf file with root password credentials
       template:

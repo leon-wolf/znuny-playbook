@@ -3,7 +3,7 @@
 
 Vagrant.configure("2") do |config|
   config.vm.define "otrs" do |otrs|
-    otrs.vm.box = "avi0xff/debian10-arm64"
+    otrs.vm.box = "check24-shopping/debian10-arm64"
     otrs.vm.provider :parallels do |v|
       v.name = "otrs"
       v.memory = 4096 
@@ -16,7 +16,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "db" do |db|
-    db.vm.box = "avi0xff/debian10-arm64"
+    db.vm.box = "check24-shopping/debian10-arm64"
     db.vm.provider :parallels do |v|
       v.name = "db"
       v.memory = 4096

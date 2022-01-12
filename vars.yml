@@ -1,5 +1,5 @@
 ---
-znuny_version: "latest"
+znuny_version: "6.2.2"
 mysql_server: "192.168.50.5"
 mysql_user: "otrs"
 mysql_password: "password"
